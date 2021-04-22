@@ -22,6 +22,7 @@ let zr = zrender.init(document.getElementById("container"));
 /* 绘制一个矩形 */
 let rectShape = {};
 let boundingRect;
+let group;
 
 function mouseDownAndMove(event) {
   rectShape.x = event.offsetX;
@@ -29,7 +30,15 @@ function mouseDownAndMove(event) {
   drawRect();
   let opt = { x: rectShape.x, y: rectShape.y }
   // drawMark(opt);
-  zr.add(boundingRect);
+  // group.add(boundingRect)
+  group.add(new zrender.Circle({
+    style: {
+      x: 100,
+      y: 100,
+      r: 20,
+    }
+  }))
+  // zr.add(boundingRect);
   zr.on("mousemove", handleMouseMove);
 }
 function handleMouseMove(ev) {
@@ -41,9 +50,8 @@ function drawMark(opt) {
   // 放到组里面
   mark = new zrender.Circle({
     style: {
-      // fill: "none",
-      color: "#0170fe",
-      lineWidth: 2
+      fill: 'transparent',
+      stroke: '#1890ff'
     },
     shape: {
       cx: opt.x,
@@ -51,23 +59,51 @@ function drawMark(opt) {
       r: 4
     },
     hoverable: true,
+    draggable: true,
     z: 2,
     onmousedown: _ => {
       // _.cancelBubble = true;
       console.log('mousedown', _)
+      /*     function handlePoint(event) {
+            // console.log(, )
+            // opt.x=event.offsetX
+            // opt.y=event.offsetY
+            // mark.setShape(opt)
+            boundingCircle.setShape(circleShape);
+            rectShape.width = event.offsetX - rectShape.x;
+            rectShape.height = event.offsetY - rectShape.y;
+            boundingRect.setShape(rectShape);
+          } */
+      console.log('circle中down', _)
+      // rectShape.x = _.offsetX;
+      // rectShape.y = _.offsetY;
+
+      zr.on("mousemove", handleMouseMove);
+      // zr.on("mousemove", handlePoint);
     },
     onmousemove: _ => {
-      console.log('mousemove')
+      // boundingRect.setShape(rectShape);
+      console.log('mousemove', _, _.offsetY)
     },
     onmouseup: _ => {
       console.log('mouseup')
+      zr.off("mousemove", handleMouseMove)
+    },
+    onmouseover: _ => {
+      _.target.cursor = 'nw-resize'
+      zr.refresh()
+      console.log(44444)
+    },
+    onmouseout: _ => {
+      console.log(77777)
     }
   })
-  zr.add(mark);
-  // vm.group.add(vm.circle)
+  // zr.add(mark);
+  group.add(mark)
 }
 
 function drawRect() {
+  group = new zrender.Group();
   boundingRect = new zrender.Rect({
     shape: rectShape, // 形状
     draggable: true,
@@ -88,6 +124,7 @@ function drawRect() {
     //   document.body.style.overflowY = ''
     // }
   });
+
   zr.on("mousedown", mouseDownAndMove);
   zr.on("mouseup", function (ev) {
     zr.off("mousemove", handleMouseMove);
@@ -114,12 +151,38 @@ function drawRect() {
   // boundingRect.onclick=function(){
   //   console.log(777777)
   // }
-  zr.on("click", function (ev) {
-    console.log(ev)
-  })
+
+  // zr.on("click", function (ev) {
+  //   console.log('clickclickclickclick',ev)
+  // })
+
   // console.log(boundingRect.getBoundingRect())
   // console.log(boundingRect.contain)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* 绘制一个圆 */
 let circleShape = {};
