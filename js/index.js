@@ -31,6 +31,7 @@ function mouseDownAndMove(event) {
   let opt = { x: rectShape.x, y: rectShape.y }
   // drawMark(opt);
   // group.add(boundingRect)
+  console.log('group',group)
   group.add(new zrender.Circle({
     style: {
       x: 100,
