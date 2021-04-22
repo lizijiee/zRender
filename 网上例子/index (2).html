@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="main" style="width:500px;height:500px;border: 1px solid teal"></div>
+    <script></script>
+    <script src="./zrender.js"></script>
+    <script type="text/javascript">
+    var data=['../sth/sth/uname.jpg','../sth/sth/QQ图片20190312124017.jpg'];
+    var zr = zrender.init(document.getElementById('main'));
+    var group = new zrender.Group();
+    for(var i = 0;i<data.length;i++){
+        var circleCut1= new zrender.Circle({    //裁剪区域
+        shape: {
+            cx: 275,
+            cy: 275,
+            r: 75
+        },
+        style:{
+            fill:'#fff',
+            stroke:'#000',
+            lineWidth:2
+        }
+    });
+        var img1 = new zrender.Image({
+        style: {
+            image: data[i],
+            x: 200,
+            y: 200,
+            width: 150,
+            height: 150
+        },
+        zlevel:level++,
+        draggable: true
+    })
+    img1.setClipPath(circleCut1);
+    group.add(img1); 
+    }
+    zr.add(group); 
+  </script>
+</body>
+</html>

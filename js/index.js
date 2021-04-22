@@ -1,9 +1,9 @@
 let btn = document.getElementsByClassName("btn-list")[0];
 let data = [
-  { line: "线段" },
+  // { line: "线段" },
   { rect: "矩形" },
-  { circle: "圆形" },
-  { arc: "弧形" },
+  // { circle: "圆形" },
+  // { arc: "弧形" },
 ];
 
 for (obj of data) {
@@ -27,6 +27,8 @@ function mouseDownAndMove(event) {
   rectShape.x = event.offsetX;
   rectShape.y = event.offsetY;
   drawRect();
+  let opt = { x: rectShape.x, y: rectShape.y }
+  // drawMark(opt);
   zr.add(boundingRect);
   zr.on("mousemove", handleMouseMove);
 }
@@ -35,21 +37,88 @@ function handleMouseMove(ev) {
   rectShape.height = ev.offsetY - rectShape.y;
   boundingRect.setShape(rectShape);
 }
+function drawMark(opt) {
+  // 放到组里面
+  mark = new zrender.Circle({
+    style: {
+      // fill: "none",
+      color: "#0170fe",
+      lineWidth: 2
+    },
+    shape: {
+      cx: opt.x,
+      cy: opt.y,
+      r: 4
+    },
+    hoverable: true,
+    z: 2,
+    onmousedown: _ => {
+      // _.cancelBubble = true;
+      console.log('mousedown', _)
+    },
+    onmousemove: _ => {
+      console.log('mousemove')
+    },
+    onmouseup: _ => {
+      console.log('mouseup')
+    }
+  })
+  zr.add(mark);
+  // vm.group.add(vm.circle)
+}
+
 function drawRect() {
   boundingRect = new zrender.Rect({
     shape: rectShape, // 形状
-    // draggable:true,
+    draggable: true,
     style: {
       fill: "none",
       lineWidth: 1, // 边框宽度
       stroke: "black",
     },
+    onmouseover: _ => {// 显示拖拽箭头
+      // document.body.style.overflowY = 'hidden'
+    },
+    // onmousewheel: _ => {
+    //   console.log(2222222)
+    //   document.body.style.overflowY = 'hidden'
+    // },
+    // onmouseout: item => {
+    //   console.log(2222222)
+    //   document.body.style.overflowY = ''
+    // }
   });
   zr.on("mousedown", mouseDownAndMove);
   zr.on("mouseup", function (ev) {
     zr.off("mousemove", handleMouseMove);
+    zr.off("mousedown", mouseDownAndMove);
+    // 绘制mark
+    // console.log(boundingRect.shape)
+    console.log(rectShape)
+    // const shape = ev.target.shape;
+    drawMark({
+      x: rectShape.x + rectShape.width,
+      y: rectShape.y + rectShape.height
+    })
+    setDisabled("");
+    // this.markInfo.forEach((item, index) => {
+    //   const opt = {
+    //     stroke: '#f00',
+    //     pointsSet: this.AssemblyData(item),
+    //     id: index
+    //   }
+    //   vm.drawMark(opt)
+    // })
     rectShape = {};
   });
+  // boundingRect.onclick=function(){
+  //   console.log(777777)
+  // }
+  zr.on("click", function (ev) {
+    console.log(ev)
+  })
+  // console.log(boundingRect.getBoundingRect())
+  // console.log(boundingRect.contain)
 }
 
 /* 绘制一个圆 */
@@ -140,31 +209,47 @@ function setDisabled(className) {
     }
   }
 }
+
 onMessage = (event, data) => {
   switch (event) {
-    case "line":
-      zr.off("mousedown", circleMouseDownAndMove);
-      zr.off("mousedown", mouseDownAndMove);
-      drawLine();
-      setDisabled("line");
-      break;
+    // case "line":
+    //   zr.off("mousedown", circleMouseDownAndMove);
+    //   zr.off("mousedown", mouseDownAndMove);
+    //   drawLine();
+    //   // setDisabled("line");
+    //   break;
     case "rect":
       zr.off("mousedown", circleMouseDownAndMove);
       zr.off("mousedown", lineMouseDownAndMove);
-      drawRect();
       setDisabled("rect");
+      drawRect();
       break;
-    case "circle":
-      zr.off("mousedown", mouseDownAndMove);
-      zr.off("mousedown", lineMouseDownAndMove);
-      drawCircle();
-      setDisabled("circle");
-      break;
-    case "arc":
-      console.log("arc");
-      break;
+    // case "circle":
+    //   zr.off("mousedown", mouseDownAndMove);
+    //   zr.off("mousedown", lineMouseDownAndMove);
+    //   drawCircle();
+    //   // setDisabled("circle");
+    //   break;
+    // case "arc":
+    //   console.log("arc");
+    //   break;
 
     default:
       break;
   }
 };
+
+
+/*
+scrollFunc = (e) => {
+  // 阻止默认事件 （缩放时外部容器禁止滚动）
+  e.preventDefault();
+
+  if(e.wheelDelta){
+
+    e.wheelDelta > 0 ? this.scale += this.step : this.scale -= this.step
+
+    this.render()
+  }
+}
+*/
